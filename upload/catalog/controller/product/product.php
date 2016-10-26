@@ -214,17 +214,27 @@ class ControllerProductProduct extends Controller {
 				'href' => $this->url->link('product/product', $url . '&product_id=' . $this->request->get['product_id'])
 			);
 
-			$this->document->setTitle($product_info['meta_title']);
+			if ($product_info['meta_title']) {
+				$this->document->setTitle($product_info['meta_title']);
+			} else {
+				$this->document->setTitle($product_info['name']);
+			}
+
 			$this->document->setDescription($product_info['meta_description']);
 			$this->document->setKeywords($product_info['meta_keyword']);
 			$this->document->addLink($this->url->link('product/product', 'product_id=' . $this->request->get['product_id']), 'canonical');
 			$this->document->addScript('catalog/view/javascript/jquery/magnific/jquery.magnific-popup.min.js');
 			$this->document->addStyle('catalog/view/javascript/jquery/magnific/magnific-popup.css');
 			$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment.js');
+			$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/locale/'.$this->session->data['language'].'.js');
 			$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
 			$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
 
-			$data['heading_title'] = $product_info['name'];
+			if ($product_info['meta_h1']) {
+				$data['heading_title'] = $product_info['meta_h1'];
+			} else {
+				$data['heading_title'] = $product_info['name'];
+			}
 
 			$data['text_select'] = $this->language->get('text_select');
 			$data['text_manufacturer'] = $this->language->get('text_manufacturer');
@@ -284,13 +294,14 @@ class ControllerProductProduct extends Controller {
 			if ($product_info['image']) {
 				$data['popup'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height'));
 			} else {
-				$data['popup'] = '';
+				$data['popup'] = $this->model_tool_image->resize('no_image.png', $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height'));;
 			}
 
 			if ($product_info['image']) {
 				$data['thumb'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height'));
+				$this->document->setOgImage($data['thumb']);
 			} else {
-				$data['thumb'] = '';
+				$data['thumb'] = $this->model_tool_image->resize('no_image.png', $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height'));
 			}
 
 			$data['images'] = array();

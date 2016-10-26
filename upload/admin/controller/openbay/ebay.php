@@ -1242,6 +1242,12 @@ class ControllerOpenbayEbay extends Controller {
 	}
 
 	public function create() {
+    //CKEditor
+    if ($this->config->get('config_editor_default')) {
+        $this->document->addScript('view/javascript/ckeditor/ckeditor.js');
+        $this->document->addScript('view/javascript/ckeditor/ckeditor_init.js');
+    }
+
 		if ($this->checkConfig() == true) {
 			if (!empty($this->request->get['product_id'])) {
 				$data = $this->load->language('openbay/ebay_new');
@@ -1259,7 +1265,8 @@ class ControllerOpenbayEbay extends Controller {
 
 				$data['action']   = $this->url->link('openbay/ebay/create', 'token=' . $this->session->data['token'], 'SSL');
 				$data['cancel']   = $this->url->link('extension/openbay/items', 'token=' . $this->session->data['token'], 'SSL');
-				$data['token']    = $this->session->data['token'];
+        $data['token'] = $this->session->data['token'];
+        $data['ckeditor'] = $this->config->get('config_editor_default');
 
 				$data['breadcrumbs'] = array();
 				$data['breadcrumbs'][] = array(
@@ -1285,6 +1292,8 @@ class ControllerOpenbayEbay extends Controller {
 				$setting = array();
 
 				$setting['dispatch_times'] = $this->openbay->ebay->getSetting('dispatch_time_max');
+
+				$data['lang'] = $this->language->get('lang');
 
 				if (is_array($setting['dispatch_times'])) {
 					ksort($setting['dispatch_times']);

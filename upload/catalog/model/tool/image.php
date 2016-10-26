@@ -2,7 +2,13 @@
 class ModelToolImage extends Model {
 	public function resize($filename, $width, $height) {
 		if (!is_file(DIR_IMAGE . $filename)) {
-			return;
+			if (is_file(DIR_IMAGE . 'no_image.jpg')) {
+				$filename = 'no_image.jpg';
+			} elseif (is_file(DIR_IMAGE . 'no_image.png')) {
+				$filename = 'no_image.png';
+			} else {
+				return;
+			}
 		}
 
 		$extension = pathinfo($filename, PATHINFO_EXTENSION);
@@ -34,6 +40,9 @@ class ModelToolImage extends Model {
 			}
 		}
 
+		$imagepath_parts = explode('/', $new_image);
+		$new_image = implode('/', array_map('rawurlencode', $imagepath_parts));
+		
 		if ($this->request->server['HTTPS']) {
 			return $this->config->get('config_ssl') . 'image/' . $new_image;
 		} else {

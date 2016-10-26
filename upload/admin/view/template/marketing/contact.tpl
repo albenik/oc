@@ -93,9 +93,14 @@
     </div>
   </div>
   <script type="text/javascript"><!--
+<?php if ($ckeditor) { ?>
+ckeditorInit('input-message', '<?php echo $token; ?>');
+<?php } else { ?>
 $('#input-message').summernote({
-	height: 300
+	height: 300,
+	lang:'<?php echo $lang; ?>'
 });
+<?php } ?>
 //--></script>
   <script type="text/javascript"><!--
 $('select[name=\'to\']').on('change', function() {
@@ -195,8 +200,12 @@ $('#input-product').parent().find('.well').delegate('.fa-minus-circle', 'click',
 });
 
 function send(url) {
+	<?php if ($ckeditor) { ?>
+	$('textarea[name=\'message\']').val(CKEDITOR.instances['input-message'].getData());
+	<?php } else { ?>
 	// Summer not fix
 	$('textarea[name=\'message\']').val($('#input-message').code());
+	<?php } ?>
 
 	$.ajax({
 		url: url,

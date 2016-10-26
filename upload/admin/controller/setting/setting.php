@@ -7,9 +7,24 @@ class ControllerSettingSetting extends Controller {
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
+		$this->load->model('localisation/language');
+
 		$this->load->model('setting/setting');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+      $language_info = $this->model_localisation_language->getLanguageByCode($this->request->post['config_language']);
+      $front_language_id = $language_info['language_id'];
+
+      $this->request->post['config_meta_title'] = $this->request->post['config_langdata'][$front_language_id]['meta_title'];
+      $this->request->post['config_meta_description'] = $this->request->post['config_langdata'][$front_language_id]['meta_description'];
+      $this->request->post['config_meta_keyword'] = $this->request->post['config_langdata'][$front_language_id]['meta_keyword'];
+      $this->request->post['config_name'] = $this->request->post['config_langdata'][$front_language_id]['name'];
+      $this->request->post['config_owner'] = $this->request->post['config_langdata'][$front_language_id]['owner'];
+      $this->request->post['config_address'] = $this->request->post['config_langdata'][$front_language_id]['address'];
+      $this->request->post['config_address'] = $this->request->post['config_langdata'][$front_language_id]['open'];
+      $this->request->post['config_address'] = $this->request->post['config_langdata'][$front_language_id]['comment'];
+			$this->request->post['config_mail_regexp'] = trim($this->request->post['config_mail_regexp']);
+
 			$this->model_setting_setting->editSetting('config', $this->request->post);
 
 			if ($this->config->get('config_currency_auto')) {
@@ -20,6 +35,7 @@ class ControllerSettingSetting extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
+			
 			$this->response->redirect($this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
@@ -51,6 +67,8 @@ class ControllerSettingSetting extends Controller {
 		$data['text_security'] = $this->language->get('text_security');
 		$data['text_upload'] = $this->language->get('text_upload');
 		$data['text_error'] = $this->language->get('text_error');
+		$data['text_summer_note'] = $this->language->get('text_summer_note');
+		$data['text_ckeditor'] = $this->language->get('text_ckeditor');
 
 		$data['entry_name'] = $this->language->get('entry_name');
 		$data['entry_owner'] = $this->language->get('entry_owner');
@@ -80,6 +98,11 @@ class ControllerSettingSetting extends Controller {
 		$data['entry_product_description_length'] = $this->language->get('entry_product_description_length');
 		$data['entry_limit_admin'] = $this->language->get('entry_limit_admin');
 		$data['entry_product_count'] = $this->language->get('entry_product_count');
+		$data['entry_product_upc_hide'] = $this->language->get('entry_product_upc_hide');
+		$data['entry_product_ean_hide'] = $this->language->get('entry_product_ean_hide');
+		$data['entry_product_jan_hide'] = $this->language->get('entry_product_jan_hide');
+		$data['entry_product_isbn_hide'] = $this->language->get('entry_product_isbn_hide');
+		$data['entry_product_mpn_hide'] = $this->language->get('entry_product_mpn_hide');
 		$data['entry_review'] = $this->language->get('entry_review');
 		$data['entry_review_guest'] = $this->language->get('entry_review_guest');
 		$data['entry_review_mail'] = $this->language->get('entry_review_mail');
@@ -156,14 +179,35 @@ class ControllerSettingSetting extends Controller {
 		$data['entry_encryption'] = $this->language->get('entry_encryption');
 		$data['entry_seo_url'] = $this->language->get('entry_seo_url');
 		$data['entry_compression'] = $this->language->get('entry_compression');
+		$data['entry_mail_regexp'] = $this->language->get('entry_mail_regexp');
+		$data['entry_editor_default'] = $this->language->get('entry_editor_default');
 		$data['entry_error_display'] = $this->language->get('entry_error_display');
 		$data['entry_error_log'] = $this->language->get('entry_error_log');
 		$data['entry_error_filename'] = $this->language->get('entry_error_filename');
+		$data['text_google_captcha'] = $this->language->get('text_google_captcha');
+		$data['entry_google_analytics'] = $this->language->get('entry_google_analytics');
+		$data['entry_seo_url'] = $this->language->get('entry_seo_url');
+		$data['entry_seo_url_type'] = $this->language->get('entry_seo_url_type');
+		$data['entry_seo_url_include_path'] = $this->language->get('entry_seo_url_include_path');
+		$data['entry_seo_url_postfix'] = $this->language->get('entry_seo_url_postfix');
+		$data['entry_seo_url_include_path_help'] = $this->language->get('entry_seo_url_include_path_help');
+		$data['entry_seo_url_postfix_help'] = $this->language->get('entry_seo_url_postfix_help');
+		$data['entry_google_captcha_public'] = $this->language->get('entry_google_captcha_public');
+		$data['entry_google_captcha_secret'] = $this->language->get('entry_google_captcha_secret');
+		$data['entry_sms_gatename'] = $this->language->get('entry_sms_gatename');
+		$data['entry_sms_to'] = $this->language->get('entry_sms_to');
+		$data['entry_sms_from'] = $this->language->get('entry_sms_from');
+		$data['entry_sms_message'] = $this->language->get('entry_sms_message');
+		$data['entry_sms_gate_username'] = $this->language->get('entry_sms_gate_username');
+		$data['entry_sms_gate_password'] = $this->language->get('entry_sms_gate_password');
+		$data['entry_sms_alert'] = $this->language->get('entry_sms_alert');
+		$data['entry_sms_copy'] = $this->language->get('entry_sms_copy');
 		$data['entry_status'] = $this->language->get('entry_status');
 
 		$data['help_geocode'] = $this->language->get('help_geocode');
 		$data['help_open'] = $this->language->get('help_open');
 		$data['help_comment'] = $this->language->get('help_comment');
+		$data['help_image'] = $this->language->get('help_image');
 		$data['help_location'] = $this->language->get('help_location');
 		$data['help_currency'] = $this->language->get('help_currency');
 		$data['help_currency_auto'] = $this->language->get('help_currency_auto');
@@ -171,6 +215,11 @@ class ControllerSettingSetting extends Controller {
 		$data['help_product_description_length'] = $this->language->get('help_product_description_length');
 		$data['help_limit_admin'] = $this->language->get('help_limit_admin');
 		$data['help_product_count'] = $this->language->get('help_product_count');
+		$data['help_product_upc_hide'] = $this->language->get('help_product_upc_hide');
+		$data['help_product_ean_hide'] = $this->language->get('help_product_ean_hide');
+		$data['help_product_jan_hide'] = $this->language->get('help_product_jan_hide');
+		$data['help_product_isbn_hide'] = $this->language->get('help_product_isbn_hide');
+		$data['help_product_mpn_hide'] = $this->language->get('help_product_mpn_hide');
 		$data['help_review'] = $this->language->get('help_review');
 		$data['help_review_guest'] = $this->language->get('help_review_guest');
 		$data['help_review_mail'] = $this->language->get('help_review_mail');
@@ -224,6 +273,14 @@ class ControllerSettingSetting extends Controller {
 		$data['help_password'] = $this->language->get('help_password');
 		$data['help_encryption'] = $this->language->get('help_encryption');
 		$data['help_compression'] = $this->language->get('help_compression');
+		$data['help_mail_regexp'] = $this->language->get('help_mail_regexp');
+		$data['help_editor_default'] = $this->language->get('help_editor_default');
+		$data['help_google_analytics'] = $this->language->get('help_google_analytics');
+		$data['help_google_captcha'] = $this->language->get('help_google_captcha');
+		$data['help_sms_from'] = $this->language->get('help_sms_from');
+		$data['help_sms_to'] = $this->language->get('help_sms_to');
+		$data['help_sms_copy'] = $this->language->get('help_sms_copy');
+		$data['help_sms_message'] = $this->language->get('help_sms_message');
 
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
@@ -236,6 +293,16 @@ class ControllerSettingSetting extends Controller {
 		$data['tab_ftp'] = $this->language->get('tab_ftp');
 		$data['tab_mail'] = $this->language->get('tab_mail');
 		$data['tab_server'] = $this->language->get('tab_server');
+		$data['tab_google'] = $this->language->get('tab_google');
+		$data['tab_sms'] = $this->language->get('tab_sms');
+
+		$data['sms_gatenames'] = array();
+
+		$files = glob(DIR_SYSTEM . 'smsgate/*.php');
+
+		foreach ($files as $file) {
+			$data['sms_gatenames'][] =  basename($file, '.php');
+		}
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -246,19 +313,19 @@ class ControllerSettingSetting extends Controller {
 		if (isset($this->error['name'])) {
 			$data['error_name'] = $this->error['name'];
 		} else {
-			$data['error_name'] = '';
+			$data['error_name'] = array();
 		}
 
 		if (isset($this->error['owner'])) {
 			$data['error_owner'] = $this->error['owner'];
 		} else {
-			$data['error_owner'] = '';
+			$data['error_owner'] = array();
 		}
 
 		if (isset($this->error['address'])) {
 			$data['error_address'] = $this->error['address'];
 		} else {
-			$data['error_address'] = '';
+			$data['error_address'] = array();
 		}
 
 		if (isset($this->error['email'])) {
@@ -276,7 +343,7 @@ class ControllerSettingSetting extends Controller {
 		if (isset($this->error['meta_title'])) {
 			$data['error_meta_title'] = $this->error['meta_title'];
 		} else {
-			$data['error_meta_title'] = '';
+			$data['error_meta_title'] = array();
 		}
 
 		if (isset($this->error['country'])) {
@@ -435,6 +502,12 @@ class ControllerSettingSetting extends Controller {
 			$data['error_limit_admin'] = '';
 		}
 
+		if (isset($this->error['mail_regexp'])) {
+			$data['error_mail_regexp'] = $this->error['mail_regexp'];
+		} else {
+			$data['error_mail_regexp'] = '';
+		}
+
 		if (isset($this->error['encryption'])) {
 			$data['error_encryption'] = $this->error['encryption'];
 		} else {
@@ -471,6 +544,12 @@ class ControllerSettingSetting extends Controller {
 		$data['cancel'] = $this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL');
 
 		$data['token'] = $this->session->data['token'];
+
+		if (isset($this->request->post['config_langdata'])) {
+			$data['config_langdata'] = $this->request->post['config_langdata'];
+		} else {
+			$data['config_langdata'] = $this->config->get('config_langdata');
+		}
 
 		if (isset($this->request->post['config_name'])) {
 			$data['config_name'] = $this->request->post['config_name'];
@@ -620,8 +699,6 @@ class ControllerSettingSetting extends Controller {
 			$data['config_language'] = $this->config->get('config_language');
 		}
 
-		$this->load->model('localisation/language');
-
 		$data['languages'] = $this->model_localisation_language->getLanguages();
 
 		if (isset($this->request->post['config_admin_language'])) {
@@ -688,6 +765,36 @@ class ControllerSettingSetting extends Controller {
 			$data['config_product_count'] = $this->request->post['config_product_count'];
 		} else {
 			$data['config_product_count'] = $this->config->get('config_product_count');
+		}
+
+		if (isset($this->request->post['config_product_upc_hide'])) {
+			$data['config_product_upc_hide'] = $this->request->post['config_product_upc_hide'];
+		} else {
+			$data['config_product_upc_hide'] = $this->config->get('config_product_upc_hide');
+		}
+
+		if (isset($this->request->post['config_product_ean_hide'])) {
+			$data['config_product_ean_hide'] = $this->request->post['config_product_ean_hide'];
+		} else {
+			$data['config_product_ean_hide'] = $this->config->get('config_product_ean_hide');
+		}
+
+		if (isset($this->request->post['config_product_jan_hide'])) {
+			$data['config_product_jan_hide'] = $this->request->post['config_product_jan_hide'];
+		} else {
+			$data['config_product_jan_hide'] = $this->config->get('config_product_jan_hide');
+		}
+
+		if (isset($this->request->post['config_product_isbn_hide'])) {
+			$data['config_product_isbn_hide'] = $this->request->post['config_product_isbn_hide'];
+		} else {
+			$data['config_product_isbn_hide'] = $this->config->get('config_product_isbn_hide');
+		}
+
+		if (isset($this->request->post['config_product_mpn_hide'])) {
+			$data['config_product_mpn_hide'] = $this->request->post['config_product_mpn_hide'];
+		} else {
+			$data['config_product_mpn_hide'] = $this->config->get('config_product_mpn_hide');
 		}
 
 		if (isset($this->request->post['config_review_status'])) {
@@ -1256,6 +1363,30 @@ class ControllerSettingSetting extends Controller {
 			$data['config_seo_url'] = $this->config->get('config_seo_url');
 		}
 
+		if (isset($this->request->post['config_seo_url_type'])) {
+			$data['config_seo_url_type'] = $this->request->post['config_seo_url_type'];
+		} elseif ($this->config->get('config_seo_url_type')) {
+			$data['config_seo_url_type'] = $this->config->get('config_seo_url_type');
+		} else {
+			$data['config_seo_url_type'] = 'seo_url';
+		}
+
+		$data['seo_types'] = array();
+		$data['seo_types'][] = array('type' => 'seo_url', 'name' => $this->language->get('text_seo_url'));
+		$data['seo_types'][] = array('type' => 'seo_pro', 'name' => $this->language->get('text_seo_pro'));
+
+		if (isset($this->request->post['config_seo_url_include_path'])) {
+			$data['config_seo_url_include_path'] = $this->request->post['config_seo_url_include_path'];
+		} else {
+			$data['config_seo_url_include_path'] = $this->config->get('config_seo_url_include_path');
+		}
+
+		if (isset($this->request->post['config_seo_url_postfix'])) {
+			$data['config_seo_url_postfix'] = $this->request->post['config_seo_url_postfix'];
+		} else {
+			$data['config_seo_url_postfix'] = $this->config->get('config_seo_url_postfix');
+		}
+
 		if (isset($this->request->post['config_file_max_size'])) {
 			$data['config_file_max_size'] = $this->request->post['config_file_max_size'];
 		} elseif ($this->config->get('config_file_max_size')) {
@@ -1300,6 +1431,20 @@ class ControllerSettingSetting extends Controller {
 			$data['config_compression'] = $this->config->get('config_compression');
 		}
 
+		if (isset($this->request->post['config_mail_regexp'])) {
+			$data['config_mail_regexp'] = $this->request->post['config_mail_regexp'];
+		} elseif ($this->config->get('config_mail_regexp')) {
+			$data['config_mail_regexp'] = $this->config->get('config_mail_regexp');
+		} else {
+			$data['config_mail_regexp'] = '/^[^\@]+@.*.[a-z]{2,15}$/i';
+		}
+
+		if (isset($this->request->post['config_editor_default'])) {
+			$data['config_editor_default'] = $this->request->post['config_editor_default'];
+		} else {
+			$data['config_editor_default'] = $this->config->get('config_editor_default');
+		}
+
 		if (isset($this->request->post['config_error_display'])) {
 			$data['config_error_display'] = $this->request->post['config_error_display'];
 		} else {
@@ -1318,6 +1463,84 @@ class ControllerSettingSetting extends Controller {
 			$data['config_error_filename'] = $this->config->get('config_error_filename');
 		}
 
+		if (isset($this->request->post['config_google_analytics'])) {
+			$data['config_google_analytics'] = $this->request->post['config_google_analytics'];
+		} else {
+			$data['config_google_analytics'] = $this->config->get('config_google_analytics');
+		}
+
+		if (isset($this->request->post['config_google_analytics_status'])) {
+			$data['config_google_analytics_status'] = $this->request->post['config_google_analytics_status'];
+		} else {
+			$data['config_google_analytics_status'] = $this->config->get('config_google_analytics_status');
+		}
+
+		if (isset($this->request->post['config_google_captcha_public'])) {
+			$data['config_google_captcha_public'] = $this->request->post['config_google_captcha_public'];
+		} else {
+			$data['config_google_captcha_public'] = $this->config->get('config_google_captcha_public');
+		}
+
+		if (isset($this->request->post['config_google_captcha_secret'])) {
+			$data['config_google_captcha_secret'] = $this->request->post['config_google_captcha_secret'];
+		} else {
+			$data['config_google_captcha_secret'] = $this->config->get('config_google_captcha_secret');
+		}
+
+		if (isset($this->request->post['config_google_captcha_status'])) {
+			$data['config_google_captcha_status'] = $this->request->post['config_google_captcha_status'];
+		} else {
+			$data['config_google_captcha_status'] = $this->config->get('config_google_captcha_status');
+		}
+
+		if (isset($this->request->post['config_sms_gatename'])) {
+			$data['config_sms_gatename'] = $this->request->post['config_sms_gatename'];
+		} else {
+			$data['config_sms_gatename'] = $this->config->get('config_sms_gatename');
+		}
+
+		if (isset($this->request->post['config_sms_to'])) {
+			$data['config_sms_to'] = $this->request->post['config_sms_to'];
+		} else {
+			$data['config_sms_to'] = $this->config->get('config_sms_to');
+		}
+
+		if (isset($this->request->post['config_sms_from'])) {
+			$data['config_sms_from'] = $this->request->post['config_sms_from'];
+		} else {
+			$data['config_sms_from'] = $this->config->get('config_sms_from');
+		}
+
+		if (isset($this->request->post['config_sms_message'])) {
+			$data['config_sms_message'] = $this->request->post['config_sms_message'];
+		} else {
+			$data['config_sms_message'] = $this->config->get('config_sms_message');
+		}
+
+		if (isset($this->request->post['config_sms_gate_username'])) {
+			$data['config_sms_gate_username'] = $this->request->post['config_sms_gate_username'];
+		} else {
+			$data['config_sms_gate_username'] = $this->config->get('config_sms_gate_username');
+		}
+
+		if (isset($this->request->post['config_sms_gate_password'])) {
+			$data['config_sms_gate_password'] = $this->request->post['config_sms_gate_password'];
+		} else {
+			$data['config_sms_gate_password'] = $this->config->get('config_sms_gate_password');
+		}
+
+		if (isset($this->request->post['config_sms_alert'])) {
+			$data['config_sms_alert'] = $this->request->post['config_sms_alert'];
+		} else {
+			$data['config_sms_alert'] = $this->config->get('config_sms_alert');
+		}
+
+		if (isset($this->request->post['config_sms_copy'])) {
+			$data['config_sms_copy'] = $this->request->post['config_sms_copy'];
+		} else {
+			$data['config_sms_copy'] = $this->config->get('config_sms_copy');
+		}
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -1330,16 +1553,19 @@ class ControllerSettingSetting extends Controller {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
-		if (!$this->request->post['config_name']) {
-			$this->error['name'] = $this->language->get('error_name');
-		}
-
-		if ((utf8_strlen($this->request->post['config_owner']) < 3) || (utf8_strlen($this->request->post['config_owner']) > 64)) {
-			$this->error['owner'] = $this->language->get('error_owner');
-		}
-
-		if ((utf8_strlen($this->request->post['config_address']) < 3) || (utf8_strlen($this->request->post['config_address']) > 256)) {
-			$this->error['address'] = $this->language->get('error_address');
+		foreach ($this->request->post['config_langdata'] as $language_id => $value) {
+			if (!$value['name']) {
+				$this->error['name'][$language_id] = $this->language->get('error_name');
+			}
+			if ((utf8_strlen($value['owner']) < 3) || (utf8_strlen($value['owner']) > 64)) {
+				$this->error['owner'][$language_id] = $this->language->get('error_owner');
+			}
+			if ((utf8_strlen($value['address']) < 3) || (utf8_strlen($value['address']) > 256)) {
+				$this->error['address'][$language_id] = $this->language->get('error_address');
+			}
+			if ((utf8_strlen($value['meta_title']) < 2) || (utf8_strlen($value['meta_title']) > 255)) {
+				$this->error['meta_title'][$language_id] = $this->language->get('error_meta_title');
+			}
 		}
 
 		if ((utf8_strlen($this->request->post['config_email']) > 96) || !preg_match('/^[^\@]+@.*.[a-z]{2,15}$/i', $this->request->post['config_email'])) {
@@ -1348,10 +1574,6 @@ class ControllerSettingSetting extends Controller {
 
 		if ((utf8_strlen($this->request->post['config_telephone']) < 3) || (utf8_strlen($this->request->post['config_telephone']) > 32)) {
 			$this->error['telephone'] = $this->language->get('error_telephone');
-		}
-
-		if (!$this->request->post['config_meta_title']) {
-			$this->error['meta_title'] = $this->language->get('error_meta_title');
 		}
 
 		if (!empty($this->request->post['config_customer_group_display']) && !in_array($this->request->post['config_customer_group_id'], $this->request->post['config_customer_group_display'])) {
@@ -1454,6 +1676,10 @@ class ControllerSettingSetting extends Controller {
 
 		if (!$this->request->post['config_limit_admin']) {
 			$this->error['limit_admin'] = $this->language->get('error_limit');
+		}
+
+		if (!trim($this->request->post['config_mail_regexp'])) {
+			$this->error['mail_regexp'] = $this->language->get('error_mail_regexp');
 		}
 
 		if ((utf8_strlen($this->request->post['config_encryption']) < 32) || (utf8_strlen($this->request->post['config_encryption']) > 1024)) {

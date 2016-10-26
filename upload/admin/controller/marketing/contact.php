@@ -7,6 +7,12 @@ class ControllerMarketingContact extends Controller {
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
+    //CKEditor
+    if ($this->config->get('config_editor_default')) {
+        $this->document->addScript('view/javascript/ckeditor/ckeditor.js');
+        $this->document->addScript('view/javascript/ckeditor/ckeditor_init.js');
+    }
+
 		$data['heading_title'] = $this->language->get('heading_title');
 
 		$data['text_default'] = $this->language->get('text_default');
@@ -35,7 +41,10 @@ class ControllerMarketingContact extends Controller {
 		$data['button_send'] = $this->language->get('button_send');
 		$data['button_cancel'] = $this->language->get('button_cancel');
 
+		$data['lang'] = $this->language->get('lang');
+
 		$data['token'] = $this->session->data['token'];
+		$data['ckeditor'] = $this->config->get('config_editor_default');
 
 		$data['breadcrumbs'] = array();
 
@@ -232,7 +241,7 @@ class ControllerMarketingContact extends Controller {
 					$message .= '</html>' . "\n";
 
 					foreach ($emails as $email) {
-						if (preg_match('/^[^\@]+@.*.[a-z]{2,15}$/i', $email)) {
+						if (preg_match($this->config->get('config_mail_regexp'), $email)) {
 							$mail = new Mail();
 							$mail->protocol = $this->config->get('config_mail_protocol');
 							$mail->parameter = $this->config->get('config_mail_parameter');

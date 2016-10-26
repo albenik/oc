@@ -21,6 +21,12 @@ class ControllerModuleHTML extends Controller {
 			$this->response->redirect($this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
+    //CKEditor
+    if ($this->config->get('config_editor_default')) {
+        $this->document->addScript('view/javascript/ckeditor/ckeditor.js');
+        $this->document->addScript('view/javascript/ckeditor/ckeditor_init.js');
+    }
+
 		$data['heading_title'] = $this->language->get('heading_title');
 
 		$data['text_edit'] = $this->language->get('text_edit');
@@ -34,6 +40,9 @@ class ControllerModuleHTML extends Controller {
 
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
+
+		$data['token'] = $this->session->data['token'];
+		$data['ckeditor'] = $this->config->get('config_editor_default');
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -102,6 +111,8 @@ class ControllerModuleHTML extends Controller {
 		$this->load->model('localisation/language');
 
 		$data['languages'] = $this->model_localisation_language->getLanguages();
+
+		$data['lang'] = $this->language->get('lang');
 
 		if (isset($this->request->post['status'])) {
 			$data['status'] = $this->request->post['status'];

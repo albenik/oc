@@ -132,8 +132,14 @@ span.hidden-xs, span.hidden-sm, span.hidden-md, span.hidden-lg {
 	color: #C4C4C4;
 }
 #profile div i {
-	font-size: 42px;
-	color: #2ca5d3;
+	font-size: 25px;
+	color: #fff;
+	background: #2199c7;
+	border-radius: 32px;
+	width: 45px;
+	height: 45px;
+	padding: 12px 0 0 2px;
+	text-align: center;
 }
 #profile div + div {
 	margin-left: 15px;
@@ -280,7 +286,7 @@ span.hidden-xs, span.hidden-sm, span.hidden-md, span.hidden-lg {
 
 
 #menu li ul a {
-	padding-left: 20px;
+	padding-left: 5px;
 }
 #menu li li ul a {
 	padding-left: 40px;
@@ -630,3 +636,9 @@ input[type="checkbox"]:checked::after, .checkbox input[type="checkbox"]:checked:
     visibility: unset;
 }
 /* Menu Fix For System -> Layout -> Banner */
+
+/* CKEditor */
+div.ckeditor {
+  z-index: 10011;
+}
+/* CKEditor */

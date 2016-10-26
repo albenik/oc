@@ -1,5 +1,16 @@
 <?php
 class ControllerCommonFileManager extends Controller {
+	function translit ($text) {
+		$rus = array("а","А","б","Б","в","В","г","Г","д","Д","е","Е","ё","Ё","є","Є","ж", "Ж",  "з","З","и","И","і","І","ї","Ї","й","Й","к","К","л","Л","м","М","н","Н","о","О","п","П","р","Р", "с","С","т","Т","у","У","ф","Ф","х","Х","ц","Ц","ч", "Ч", "ш", "Ш", "щ",  "Щ", "ъ","Ъ", "ы","Ы","ь","Ь","э","Э","ю", "Ю", "я","Я",'/',' ');
+		$eng =array("a","A","b","B","v","V","g","G","d","D","e","E","e","E","e","E", "zh","ZH","z","Z","i","I","i","I","yi","YI","j","J","k","K","l","L","m","M","n","N","o","O", "p","P","r","R","s","S","t","T","u","U","f","F","h","H","c","C","ch","CH", "sh","SH","sch","SCH","", "", "y","Y","","","e","E","ju","JU","ja","JA",'','');
+		$text = strtolower(str_replace($rus,$eng,$text));
+    $disallow_symbols = array(
+        ' ' => '-', '\\' => '-', '/' => '-', ':' => '-', '*' => '',
+        '?' => '', ',' => '', '"' => '', '\'' => '', '<' => '', '>' => '', '|' => ''
+    );
+		return trim(strip_tags(str_replace(array_keys($disallow_symbols), array_values($disallow_symbols), trim(html_entity_decode($text, ENT_QUOTES, 'UTF-8')))), '-');
+	}
+
 	public function index() {
 		$this->load->language('common/filemanager');
 
@@ -54,6 +65,10 @@ class ControllerCommonFileManager extends Controller {
 
 			if (is_dir($image)) {
 				$url = '';
+
+        if (isset($this->request->get['cke'])) {
+          $url .= '&cke=' . $this->request->get['cke'];
+        }
 
 				if (isset($this->request->get['target'])) {
 					$url .= '&target=' . $this->request->get['target'];
@@ -124,6 +139,13 @@ class ControllerCommonFileManager extends Controller {
 			$data['target'] = '';
 		}
 
+		// CKEditor
+		if (isset($this->request->get['cke'])) {
+			$data['cke'] = $this->request->get['cke'];
+		} else {
+			$data['cke'] = '';
+		}
+
 		// Return the thumbnail for the file manager to show a thumbnail
 		if (isset($this->request->get['thumb'])) {
 			$data['thumb'] = $this->request->get['thumb'];
@@ -142,6 +164,10 @@ class ControllerCommonFileManager extends Controller {
 			}
 		}
 
+    if (isset($this->request->get['cke'])) {
+      $url .= '&cke=' . $this->request->get['cke'];
+    }
+
 		if (isset($this->request->get['target'])) {
 			$url .= '&target=' . $this->request->get['target'];
 		}
@@ -158,6 +184,10 @@ class ControllerCommonFileManager extends Controller {
 		if (isset($this->request->get['directory'])) {
 			$url .= '&directory=' . urlencode($this->request->get['directory']);
 		}
+
+    if (isset($this->request->get['cke'])) {
+      $url .= '&cke=' . $this->request->get['cke'];
+    }
 
 		if (isset($this->request->get['target'])) {
 			$url .= '&target=' . $this->request->get['target'];
@@ -178,6 +208,10 @@ class ControllerCommonFileManager extends Controller {
 		if (isset($this->request->get['filter_name'])) {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 		}
+
+    if (isset($this->request->get['cke'])) {
+      $url .= '&cke=' . $this->request->get['cke'];
+    }
 
 		if (isset($this->request->get['target'])) {
 			$url .= '&target=' . $this->request->get['target'];
@@ -223,7 +257,7 @@ class ControllerCommonFileManager extends Controller {
 		if (!$json) {
 			if (!empty($this->request->files['file']['name']) && is_file($this->request->files['file']['tmp_name'])) {
 				// Sanitize the filename
-				$filename = basename(html_entity_decode($this->request->files['file']['name'], ENT_QUOTES, 'UTF-8'));
+				$filename = basename(html_entity_decode($this->translit($this->request->files['file']['name'], ENT_QUOTES, 'UTF-8')));
 
 				// Validate the filename length
 				if ((utf8_strlen($filename) < 3) || (utf8_strlen($filename) > 255)) {
@@ -286,6 +320,9 @@ class ControllerCommonFileManager extends Controller {
 
 		$json = array();
 
+    //Translit Folder Name
+    $this->request->post['folder'] = $this->translit($this->request->post['folder']);
+    
 		// Check user has permission
 		if (!$this->user->hasPermission('modify', 'common/filemanager')) {
 			$json['error'] = $this->language->get('error_permission');

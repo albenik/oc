@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="<?php echo $direction; ?>" lang="<?php echo $lang; ?>">
+<html dir="<?php echo $direction; ?>" lang="<?php echo $code; ?>">
 <head>
 <meta charset="UTF-8" />
 <title><?php echo $title; ?></title>
@@ -17,7 +17,9 @@
 <link href="view/javascript/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
 <link href="view/javascript/summernote/summernote.css" rel="stylesheet" />
 <script type="text/javascript" src="view/javascript/summernote/summernote.js"></script>
+<script src="view/javascript/summernote/lang/summernote-<?php echo $lang; ?>.js"></script>
 <script src="view/javascript/jquery/datetimepicker/moment.js" type="text/javascript"></script>
+<script src="view/javascript/jquery/datetimepicker/locale/<?php echo $code; ?>.js" type="text/javascript"></script>
 <script src="view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
 <link href="view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" media="screen" />
 <link type="text/css" href="view/stylesheet/stylesheet.css" rel="stylesheet" media="screen" />
@@ -69,9 +71,9 @@
         <?php } ?>
         <li class="divider"></li>
         <li class="dropdown-header"><?php echo $text_help; ?> <i class="fa fa-life-ring"></i></li>
-        <li><a href="http://www.opencart.com" target="_blank"><?php echo $text_homepage; ?></a></li>
-        <li><a href="http://docs.opencart.com" target="_blank"><?php echo $text_documentation; ?></a></li>
-        <li><a href="http://forum.opencart.com" target="_blank"><?php echo $text_support; ?></a></li>
+        <li><a href="http://myopencart.com" target="_blank"><?php echo $text_homepage; ?></a></li>
+        <li><a href="http://docs.myopencart.com" target="_blank"><?php echo $text_documentation; ?></a></li>
+        <li><a href="https://opencartforum.com" target="_blank"><?php echo $text_support; ?></a></li>
       </ul>
     </li>
     <li><a href="<?php echo $logout; ?>"><span class="hidden-xs hidden-sm hidden-md"><?php echo $text_logout; ?></span> <i class="fa fa-sign-out fa-lg"></i></a></li>

@@ -1,6 +1,7 @@
 <?php
 // Version
-define('VERSION', '2.1.0.2');
+define('VERSION', '2.1.0.2.1'); /* Fix version 02.04.2016 */
+
 
 // Configuration
 if (is_file('config.php')) {
@@ -193,6 +194,14 @@ $language = new Language($languages[$code]['directory']);
 $language->load($languages[$code]['directory']);
 $registry->set('language', $language);
 
+//MultiLanguage Settings
+$langdata = $config->get('config_langdata');
+if (isset($langdata[$languages[$code]['language_id']])) {
+  foreach ($langdata[$languages[$code]['language_id']] as $key => $value) {
+    $config->set('config_' . $key, $value);
+  }
+}
+
 // Document
 $registry->set('document', new Document());
 
@@ -258,7 +267,11 @@ $controller = new Front($registry);
 $controller->addPreAction(new Action('common/maintenance'));
 
 // SEO URL's
-$controller->addPreAction(new Action('common/seo_url'));
+if (!$seo_type = $config->get('config_seo_url_type')) {
+	$seo_type = 'seo_url';
+}
+
+$controller->addPreAction(new Action('common/' . $seo_type));
 
 // Router
 if (isset($request->get['route'])) {
